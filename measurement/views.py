@@ -1,6 +1,8 @@
-from rest_framework.generics import ListAPIView, RetrieveUpdateAPIView, CreateAPIView, RetrieveAPIView
+from rest_framework.generics import ListAPIView, RetrieveUpdateAPIView, CreateAPIView
 from .models import Measurement, Sensor
+from rest_framework.views import APIView
 from .serializers import MeasurementSerializer, SensorDetailSerializer, SensorSerializer
+from rest_framework.response import Response
 
 
 class SensorList(ListAPIView):
@@ -8,9 +10,11 @@ class SensorList(ListAPIView):
     serializer_class = SensorSerializer
 
 
-class SensorDetail(RetrieveAPIView):
-    queryset = Sensor.objects.all()
-    serializer_class = SensorDetailSerializer
+class SensorDetail(APIView):
+    def get(self, request, pk):
+        sensor = Sensor.objects.get(pk=pk)
+        serializer = SensorDetailSerializer(sensor)
+        return Response(serializer.data)
 
 
 class SensorUpdate(RetrieveUpdateAPIView):
